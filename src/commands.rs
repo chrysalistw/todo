@@ -3,6 +3,7 @@ use std::fs;
 use std::io;
 use std::io::Result;
 
+/*
 fn get_command(args: &[String], index: usize) -> Result<&str, String> {
     if args.len()>index {
         Ok(&args[index])
@@ -11,6 +12,7 @@ fn get_command(args: &[String], index: usize) -> Result<&str, String> {
         Err(format!("Index {} out of bounds. Max index: {}", index, args.len()-1))
     }
 }
+*/
 pub fn add(args: &Vec<String>) -> Result<()> {
     let path: &str;
     if args.len()>=3 {
