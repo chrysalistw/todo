@@ -1,18 +1,15 @@
 use std::fs;
-//use std::path;
 use std::io;
 use std::io::Result;
 
-/*
-fn get_command(args: &[String], index: usize) -> Result<&str, String> {
-    if args.len()>index {
-        Ok(&args[index])
-    }
-    else{
-        Err(format!("Index {} out of bounds. Max index: {}", index, args.len()-1))
+#[allow(dead_code)]
+fn get_command(args: &[String], index: usize) -> Result<&str> {
+    match args.get(index) {
+        Some(_) => Ok(&args[index]),
+        None => todo!(),
     }
 }
-*/
+
 pub fn add(args: &Vec<String>) -> Result<()> {
     let path: &str;
     if args.len()>=3 {
