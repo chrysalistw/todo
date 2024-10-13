@@ -1,1 +1,0 @@
-content of d.txt is here!
