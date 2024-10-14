@@ -23,7 +23,7 @@ pub fn add(args: &[String]) -> Result<()> {
     fs::write(file_name, buffer)?;
     Ok(())
 }
-pub fn list(_args: &Vec<String>) -> std::io::Result<()>{
+pub fn list(_args: &[String]) -> std::io::Result<()>{
     println!("list");
     let directory_existence: bool = fs::exists("added").unwrap();
     if !directory_existence {
@@ -35,7 +35,7 @@ pub fn list(_args: &Vec<String>) -> std::io::Result<()>{
     }
     Ok(())
 }
-pub fn view(args: &Vec<String>) -> std::io::Result<()>{
+pub fn view(args: &[String]) -> std::io::Result<()>{
     let path = match args.get(2){
         None => todo!(),
         Some(path) => path
@@ -60,7 +60,7 @@ pub fn help() -> std::io::Result<()>{
     println!("     you're looking at it right now.");
     Ok(())
 }
-pub fn not_found(args: &Vec<String>) -> std::io::Result<()>{
+pub fn not_found(args: &[String]) -> std::io::Result<()>{
     let command = &args[1];
     println!("command {} not recognizable.", command);
     println!("type `todo help` to see instructions.");
