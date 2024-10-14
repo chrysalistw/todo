@@ -2,23 +2,11 @@ use std::fs;
 use std::io;
 use std::io::Result;
 
-#[allow(dead_code)]
-fn get_command(args: &[String], index: usize) -> Result<&str> {
-    match args.get(index) {
-        Some(_) => Ok(&args[index]),
+pub fn add(args: &[String]) -> Result<()> {
+    let path = match args.get(2){
         None => todo!(),
-    }
-}
-
-pub fn add(args: &Vec<String>) -> Result<()> {
-    let path: &str;
-    if args.len()>=3 {
-        path = &args[2]
-    }
-    else {
-        println!("path unspecified. panicking.");
-        panic!();
-    }
+        Some(path) => path
+    };
 
     println!("adding to {}", path);
     println!("content of txt: ");
@@ -48,14 +36,10 @@ pub fn list(_args: &Vec<String>) -> std::io::Result<()>{
     Ok(())
 }
 pub fn view(args: &Vec<String>) -> std::io::Result<()>{
-    let path: &str;
-    if args.len()>=3 {
-        path = &args[2];
-    }
-    else {
-        println!("path unspecified. panicking.");
-        panic!();
-    }
+    let path = match args.get(2){
+        None => todo!(),
+        Some(path) => path
+    };
 
     let file_path = format!("added/{}.txt", path);
     let content = fs::read(&file_path)?;
@@ -64,8 +48,21 @@ pub fn view(args: &Vec<String>) -> std::io::Result<()>{
     println!("{}", String::from_utf8(content).unwrap());
     Ok(())
 }
+pub fn help() -> std::io::Result<()>{
+    println!("Listing available commands:");
+    println!(" add [filename]");
+    println!("     adds content to [filename].txt");
+    println!(" list ");
+    println!("     list files in added/");
+    println!(" view [filename]");
+    println!("     view content of [filename].txt");
+    println!(" help ");
+    println!("     you're looking at it right now.");
+    Ok(())
+}
 pub fn not_found(args: &Vec<String>) -> std::io::Result<()>{
     let command = &args[1];
     println!("command {} not recognizable.", command);
+    println!("type `todo help` to see instructions.");
     Ok(())
 }

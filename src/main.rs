@@ -19,6 +19,9 @@ fn main() -> std::io::Result<()>{
     else if command == "view" {
         commands::view(&args)?;
     }
+    else if command == "help" {
+        commands::help()?;
+    }
     else {
         commands::not_found(&args)?;
         //println!("command {} not recognizable.", command);
