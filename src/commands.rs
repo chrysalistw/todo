@@ -1,6 +1,7 @@
 use std::fs;
 use std::io;
 use std::io::Result;
+use std::path::Path;
 
 pub fn get_argument(args: &[String], index: usize) -> &str{
     match args.get(index){
@@ -8,12 +9,7 @@ pub fn get_argument(args: &[String], index: usize) -> &str{
         Some(path) => path
     }
 }
-pub fn add(args: &[String]) -> Result<()> {
-    let path = match args.get(2){
-        None => "",
-        Some(path) => path
-    };
-
+pub fn add(path: &str) -> Result<()> {
     println!("adding to {}", path);
     println!("content of txt: ");
 
@@ -31,17 +27,12 @@ pub fn add(args: &[String]) -> Result<()> {
 }
 pub fn list(args: &[String]) -> std::io::Result<()>{
 	let mut listing_contents = false;
-    let command = match args.get(2){
-        None => "",
-        Some(command) => command
-    };
-	if command=="-c" {
-		listing_contents = true;
-		println!("listing with contents");
-	}
-	else{
-    	println!("list");
-	}
+
+    let flag = get_argument(&args, 2);
+    match flag {
+        "-c" => { listing_contents = true; },
+        &_ => todo!()
+    }
     let directory_existence: bool = fs::exists("added").unwrap();
     if !directory_existence {
         println!("text directory not found.");
@@ -50,21 +41,17 @@ pub fn list(args: &[String]) -> std::io::Result<()>{
         let entry = entry?;
         println!("{:?}", entry.file_name());
 		if listing_contents {
-			view(std::slice::from_ref(&entry.file_name().into_string().unwrap()));
+			let _ = view(entry.file_name().to_str().unwrap());
 		}
     }
     Ok(())
 }
-pub fn view(args: &[String]) -> std::io::Result<()>{
-    let path = match args.get(2){
-        None => todo!(),
-        Some(path) => path
-    };
-
+pub fn view(path: &str) -> std::io::Result<()>{
+    let path = Path::new(path).file_stem().unwrap().to_str().unwrap();
     let file_path = format!("added/{}.txt", path);
     let content = fs::read(&file_path)?;
 
-    //println!("viewing {}.txt: ", &path);
+    //println!("viewing {}.txt: ", path);
     println!("{}", String::from_utf8(content).unwrap());
     Ok(())
 }
