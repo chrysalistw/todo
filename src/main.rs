@@ -9,7 +9,10 @@ fn main() -> std::io::Result<()>{
     //println!("{:?}", args);
     println!(" ");
 
-    let command: &str = &args[1];
+    let command = match args.get(1){
+        None => todo!(),
+        Some(path) => path
+    };
     if command == "add" {
         commands::add(&args)?;
     }
@@ -18,6 +21,9 @@ fn main() -> std::io::Result<()>{
     }
     else if command == "view" {
         commands::view(&args)?;
+    }
+    else if command == "edit" {
+        commands::edit(&args)?;
     }
     else if command == "help" {
         commands::help()?;

@@ -2,9 +2,15 @@ use std::fs;
 use std::io;
 use std::io::Result;
 
+pub fn get_argument(args: &[String], index: usize) -> &str{
+    match args.get(index){
+        None => todo!(),
+        Some(path) => path
+    }
+}
 pub fn add(args: &[String]) -> Result<()> {
     let path = match args.get(2){
-        None => todo!(),
+        None => "",
         Some(path) => path
     };
 
@@ -23,8 +29,19 @@ pub fn add(args: &[String]) -> Result<()> {
     fs::write(file_name, buffer)?;
     Ok(())
 }
-pub fn list(_args: &[String]) -> std::io::Result<()>{
-    println!("list");
+pub fn list(args: &[String]) -> std::io::Result<()>{
+	let mut listing_contents = false;
+    let command = match args.get(2){
+        None => "",
+        Some(command) => command
+    };
+	if command=="-c" {
+		listing_contents = true;
+		println!("listing with contents");
+	}
+	else{
+    	println!("list");
+	}
     let directory_existence: bool = fs::exists("added").unwrap();
     if !directory_existence {
         println!("text directory not found.");
@@ -32,6 +49,9 @@ pub fn list(_args: &[String]) -> std::io::Result<()>{
     for entry in fs::read_dir("added")? {
         let entry = entry?;
         println!("{:?}", entry.file_name());
+		if listing_contents {
+			view(std::slice::from_ref(&entry.file_name().into_string().unwrap()));
+		}
     }
     Ok(())
 }
@@ -44,9 +64,12 @@ pub fn view(args: &[String]) -> std::io::Result<()>{
     let file_path = format!("added/{}.txt", path);
     let content = fs::read(&file_path)?;
 
-    println!("viewing {}.txt: ", &path);
+    //println!("viewing {}.txt: ", &path);
     println!("{}", String::from_utf8(content).unwrap());
     Ok(())
+}
+pub fn edit(args: &[String]) -> std::io::Result<()>{
+	todo!();
 }
 pub fn help() -> std::io::Result<()>{
     println!("Listing available commands:");
