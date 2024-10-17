@@ -29,8 +29,7 @@ fn main() -> std::io::Result<()>{
         commands::help()?;
     }
     else {
-        commands::not_found(&args)?;
-        //println!("command {} not recognizable.", command);
+        commands::not_found()?;
     }
     Ok(())
 }

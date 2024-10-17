@@ -1,15 +1,20 @@
 use std::fs;
+use std::fs::OpenOptions;
 use std::io;
+use std::io::Write;
 use std::io::Result;
 use std::path::Path;
+use chrono;
 
 pub fn get_argument(args: &[String], index: usize) -> &str{
     match args.get(index){
-        None => todo!(),
+        None => "",
         Some(path) => path
     }
 }
 pub fn add(path: &str) -> Result<()> {
+	let time_stamp = chrono::offset::Local::now();
+	println!("current time is: {:#?}", time_stamp);
     println!("adding to {}", path);
     println!("content of txt: ");
 
@@ -22,16 +27,20 @@ pub fn add(path: &str) -> Result<()> {
     }
     
     let file_name = format!("added/{}.txt", path);
-    fs::write(file_name, buffer)?;
+
+	let mut file = OpenOptions::new().create(true).write(true).append(true).open(&file_name)?;
+
+	writeln!(file, "{:?}", time_stamp)?;
+	writeln!(file, "{}", buffer)?;
     Ok(())
 }
 pub fn list(args: &[String]) -> std::io::Result<()>{
-	let mut listing_contents = false;
+	let listing_contents: bool;
 
     let flag = get_argument(&args, 2);
     match flag {
         "-c" => { listing_contents = true; },
-        &_ => todo!()
+        &_ => { listing_contents = false; }
     }
     let directory_existence: bool = fs::exists("added").unwrap();
     if !directory_existence {
@@ -55,24 +64,23 @@ pub fn view(path: &str) -> std::io::Result<()>{
     println!("{}", String::from_utf8(content).unwrap());
     Ok(())
 }
-pub fn edit(args: &[String]) -> std::io::Result<()>{
+pub fn edit(_args: &[String]) -> std::io::Result<()>{
 	todo!();
 }
 pub fn help() -> std::io::Result<()>{
     println!("Listing available commands:");
     println!(" add [filename]");
-    println!("     adds content to [filename].txt");
+    println!("     append content to [filename].txt with timestamp.");
     println!(" list ");
-    println!("     list files in added/");
+    println!("     list files in added/. Attach `-c` to show their contents.");
     println!(" view [filename]");
     println!("     view content of [filename].txt");
     println!(" help ");
     println!("     you're looking at it right now.");
     Ok(())
 }
-pub fn not_found(args: &[String]) -> std::io::Result<()>{
-    let command = &args[1];
-    println!("command {} not recognizable.", command);
+pub fn not_found() -> std::io::Result<()>{
+    println!("command not recognizable.");
     println!("type `todo help` to see instructions.");
     Ok(())
 }
