@@ -6,6 +6,9 @@ use std::io::Result;
 use std::path::Path;
 use chrono;
 
+mod file_format;
+use file_format::{TodoFile};
+
 pub fn get_argument(args: &[String], index: usize) -> &str{
     match args.get(index){
         None => "",
@@ -33,6 +36,16 @@ pub fn add(path: &str) -> Result<()> {
 	writeln!(file, "{:?}", time_stamp)?;
 	writeln!(file, "{}", buffer)?;
     Ok(())
+}
+pub fn test() -> Result<()>{
+	let mut f = TodoFile::new();
+	println!("{:?}", f);
+
+	f.set_content("abc_abc");
+	f.set_content("abc_abc_2");
+
+	println!("{:?}", f);
+	Ok(())
 }
 pub fn list(args: &[String]) -> std::io::Result<()>{
 	let listing_contents: bool;

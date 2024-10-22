@@ -25,6 +25,9 @@ fn main() -> std::io::Result<()>{
     else if command == "edit" {
         commands::edit(&args)?;
     }
+	else if command == "test" {
+		commands::test()?;
+	}
     else if command == "help" {
         commands::help()?;
     }
