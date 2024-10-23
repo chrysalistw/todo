@@ -2,20 +2,20 @@ use std::fs;
 use std::fs::OpenOptions;
 use std::io;
 use std::io::Write;
-use std::io::Result;
+//use std::io::Result;
 use std::path::Path;
 use chrono;
 
 mod file_format;
 use file_format::{TodoFile};
 
-pub fn get_argument(args: &[String], index: usize) -> &str{
+pub fn get_argument(args: &[String], index: usize) -> Result<&str, ()>{
     match args.get(index){
-        None => "",
-        Some(path) => path
+        Some(path) => Ok(path),
+        None => Err(())
     }
 }
-pub fn add(path: &str) -> Result<()> {
+pub fn add(path: &str) -> std::io::Result<()> {
 	let time_stamp = chrono::offset::Local::now();
 	println!("current time is: {:#?}", time_stamp);
     println!("adding to {}", path);
@@ -37,7 +37,7 @@ pub fn add(path: &str) -> Result<()> {
 	writeln!(file, "{}", buffer)?;
     Ok(())
 }
-pub fn test() -> Result<()>{
+pub fn test() -> std::io::Result<()>{
 	let mut f = TodoFile::new();
 	println!("{:?}", f);
 
@@ -50,7 +50,7 @@ pub fn test() -> Result<()>{
 pub fn list(args: &[String]) -> std::io::Result<()>{
 	let listing_contents: bool;
 
-    let flag = get_argument(&args, 2);
+    let flag = get_argument(&args, 2).unwrap();
     match flag {
         "-c" => { listing_contents = true; },
         &_ => { listing_contents = false; }
