@@ -1,5 +1,6 @@
-#[derive(Debug)]
+use chrono;
 
+#[derive(Debug)]
 #[allow(dead_code)]
 pub struct TodoFile {
 		number: u32,
@@ -20,12 +21,14 @@ impl TodoFile {
 
 	#[allow(dead_code)]
 	pub fn set_number(&mut self) {
+        // how to get latest serial number of todo file?
 		todo!();
 	}
 
 	#[allow(dead_code)]
-	pub fn set_time(&mut self) {
-		todo!();
+	pub fn set_time(&mut self){
+	    let time_stamp = chrono::offset::Local::now();
+        self.time = format!("{}", time_stamp);
 	}
 
 	pub fn set_content(&mut self, content: &str){
@@ -37,18 +40,28 @@ impl TodoFile {
 	}
 
 	#[allow(dead_code)]
-	pub fn add_tag(&mut self) {
-		todo!();
+	pub fn add_tag(&mut self, tag: &str) -> Result<(), &'static str> {
+        let index = self.tags.iter().position(|r| r == tag);
+        match index {
+            None => { self.tags.push(tag.to_string()); },
+            Some(_) => { return Err("tag already exists"); }
+        }
+        Ok(())
 	}
 
 	#[allow(dead_code)]
-	pub fn remove_tag(&mut self) {
-		todo!();
+	pub fn remove_tag(&mut self, tag: &str) -> Result<(), &'static str> {
+        let index = self.tags.iter().position(|r| r == tag);
+        match index {
+            None => { return Err("tag does not exist"); },
+            Some(i) => { self.tags.remove(i); }
+        }
+        Ok(())
 	}
 
 	#[allow(dead_code)]
 	pub fn list_tags(&mut self) {
-		todo!();
+        println!("{:#?}", self.tags);
 	}
 
 	#[allow(dead_code)]

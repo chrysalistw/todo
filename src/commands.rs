@@ -43,8 +43,12 @@ pub fn test() -> std::io::Result<()>{
 	let mut f = TodoFile::new();
 	println!("{:?}", f);
 
+    f.set_time();
 	f.set_content("abc_abc");
-	f.set_content("abc_abc_2");
+    let _ = f.add_tag("test_a");
+    let _ = f.add_tag("test_b");
+    let _ = f.add_tag("test_c");
+    let _ = f.remove_tag("test_b");
 
 	println!("{:?}", f);
 	Ok(())
