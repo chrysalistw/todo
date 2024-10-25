@@ -1,18 +1,20 @@
 use std::fs;
 use std::fs::OpenOptions;
 use std::io;
+use std::io::{Error, ErrorKind};
 use std::io::Write;
-//use std::io::Result;
 use std::path::Path;
 use chrono;
 
 mod file_format;
 use file_format::{TodoFile};
 
-pub fn get_argument(args: &[String], index: usize) -> Result<&str, ()>{
+
+pub fn get_argument(args: &[String], index: usize) -> std::io::Result<&str>{
+    let argument_not_found = Error::new(ErrorKind::InvalidInput, "argument not found.");
     match args.get(index){
         Some(path) => Ok(path),
-        None => Err(())
+        None => Err(argument_not_found)
     }
 }
 pub fn add(path: &str) -> std::io::Result<()> {
@@ -50,7 +52,7 @@ pub fn test() -> std::io::Result<()>{
 pub fn list(args: &[String]) -> std::io::Result<()>{
 	let listing_contents: bool;
 
-    let flag = get_argument(&args, 2).unwrap();
+    let flag = get_argument(&args, 2)?;
     match flag {
         "-c" => { listing_contents = true; },
         &_ => { listing_contents = false; }
