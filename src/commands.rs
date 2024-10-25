@@ -40,9 +40,20 @@ pub fn add(path: &str) -> std::io::Result<()> {
     Ok(())
 }
 pub fn test() -> std::io::Result<()>{
+    let mut serial_num_String: String = String::from_utf8(fs::read("info.txt")?).unwrap();
+    if serial_num_String.ends_with('\n') {
+        serial_num_String.pop();
+        if serial_num_String.ends_with('\r') {
+            serial_num_String.pop();
+        }
+    }
+	println!("String: {}", serial_num_String);
+	let serial_num: u32 = serial_num_String.parse().unwrap();
+	println!("num: {}", serial_num);
 	let mut f = TodoFile::new();
 	println!("{:?}", f);
 
+	f.set_number(serial_num+1);
     f.set_time();
 	f.set_content("abc_abc");
     let _ = f.add_tag("test_a");
@@ -51,6 +62,9 @@ pub fn test() -> std::io::Result<()>{
     let _ = f.remove_tag("test_b");
 
 	println!("{:?}", f);
+	f.to_file_string();
+	let mut info = OpenOptions::new().create(true).write(true).open("info.txt")?;
+	write!(info, "{}", serial_num+1)?;
 	Ok(())
 }
 pub fn list(args: &[String]) -> std::io::Result<()>{
@@ -79,7 +93,6 @@ pub fn view(path: &str) -> std::io::Result<()>{
     let file_path = format!("added/{}.txt", path);
     let content = fs::read(&file_path)?;
 
-    //println!("viewing {}.txt: ", path);
     println!("{}", String::from_utf8(content).unwrap());
     Ok(())
 }

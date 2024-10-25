@@ -20,12 +20,10 @@ impl TodoFile {
 	}
 
 	#[allow(dead_code)]
-	pub fn set_number(&mut self) {
-        // how to get latest serial number of todo file?
-		todo!();
+	pub fn set_number(&mut self, num: u32) {
+		self.number = num;
 	}
 
-	#[allow(dead_code)]
 	pub fn set_time(&mut self){
 	    let time_stamp = chrono::offset::Local::now();
         self.time = format!("{}", time_stamp);
@@ -39,7 +37,6 @@ impl TodoFile {
 		self.content = content.to_string();
 	}
 
-	#[allow(dead_code)]
 	pub fn add_tag(&mut self, tag: &str) -> Result<(), &'static str> {
         let index = self.tags.iter().position(|r| r == tag);
         match index {
@@ -49,7 +46,6 @@ impl TodoFile {
         Ok(())
 	}
 
-	#[allow(dead_code)]
 	pub fn remove_tag(&mut self, tag: &str) -> Result<(), &'static str> {
         let index = self.tags.iter().position(|r| r == tag);
         match index {
@@ -66,6 +62,15 @@ impl TodoFile {
 
 	#[allow(dead_code)]
 	pub fn to_file_string(&self) -> String {
-		todo!();
+		let mut file_string: String = String::from("");
+		file_string += &format!("[content]\n{}\n\n", self.content);
+		file_string += &format!("[timestamp]\n{}\n\n", self.time);
+		file_string += &format!("[tags]\n");
+		for tag in &self.tags {
+			file_string += &format!("{}\n", tag);
+		}
+
+		println!("{}", file_string);
+		file_string
 	}
 }
