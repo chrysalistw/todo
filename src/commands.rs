@@ -40,15 +40,15 @@ pub fn add(path: &str) -> std::io::Result<()> {
     Ok(())
 }
 pub fn test() -> std::io::Result<()>{
-    let mut serial_num_String: String = String::from_utf8(fs::read("info.txt")?).unwrap();
-    if serial_num_String.ends_with('\n') {
-        serial_num_String.pop();
-        if serial_num_String.ends_with('\r') {
-            serial_num_String.pop();
+    let mut serial_num_string: String = String::from_utf8(fs::read("info.txt")?).unwrap();
+    if serial_num_string.ends_with('\n') {
+        serial_num_string.pop();
+        if serial_num_string.ends_with('\r') {
+            serial_num_string.pop();
         }
     }
-	println!("String: {}", serial_num_String);
-	let serial_num: u32 = serial_num_String.parse().unwrap();
+	println!("String: {}", serial_num_string);
+	let serial_num: u32 = serial_num_string.parse().unwrap();
 	println!("num: {}", serial_num);
 	let mut f = TodoFile::new();
 	println!("{:?}", f);
