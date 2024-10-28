@@ -68,13 +68,19 @@ pub fn test() -> std::io::Result<()>{
 	Ok(())
 }
 pub fn list(args: &[String]) -> std::io::Result<()>{
-	let listing_contents: bool;
+	let listing_contents: bool = match get_argument(&args, 2) {
+		Err(_) => false,
+		Ok(flag) => flag == "-c"
+	};
+/*
+    let flag = get_argument(&args, 2)
 
-    let flag = get_argument(&args, 2)?;
+.expect("use `todo list -c` to view contents.");
     match flag {
         "-c" => { listing_contents = true; },
         &_ => { listing_contents = false; }
     }
+*/
     let directory_existence: bool = fs::exists("added").unwrap();
     if !directory_existence {
         println!("text directory not found.");
