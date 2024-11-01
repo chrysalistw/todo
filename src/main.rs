@@ -21,8 +21,7 @@ fn main() -> std::io::Result<()>{
 		Ok(c) => c
 	};
     if command == "add" {
-        let path = get_argument(&args, 2)?;
-        commands::add(path)?;
+        commands::add()?;
     }
     else if command == "list" {
         commands::list(&args)?;
