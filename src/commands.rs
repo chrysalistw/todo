@@ -3,7 +3,6 @@ use std::fs::OpenOptions;
 use std::io;
 use std::io::{Error, ErrorKind};
 use std::io::Write;
-use std::path::Path;
 
 mod file_format;
 use file_format::{TodoFile};
@@ -20,20 +19,22 @@ pub fn test() -> std::io::Result<()>{
 	Ok(())
 }
 pub fn add() -> std::io::Result<()>{
-	let serial_num: usize = match fs::read_to_string(".serial_num"){
-		Ok(s) => s.parse().unwrap(),
-		Err(_) => 0
-	};
-
 	let mut f = TodoFile::new();
 
-	f.set_number(serial_num+1);
     f.set_time();
+
+    let mut title = String::new();
+	println!("title: ");
+    io::stdin().read_line(&mut title)?;
+	f.set_title(&title.replace("\n", ""));
 
     let mut content = String::new();
 	println!("content: ");
     io::stdin().read_line(&mut content)?;
 	f.set_content(&content);
+	
+	f.generate_hash();
+	
 	println!("tags (separate by \", \"): ");
     let mut tags = String::new();
     io::stdin().read_line(&mut tags)?;
@@ -47,11 +48,9 @@ pub fn add() -> std::io::Result<()>{
     }
 
     let file_name = format!("added/{}", f.filename());
-	let mut file = OpenOptions::new().create(true).write(true).append(true).open(file_name)?;
+	let mut file = OpenOptions::new().create(true).write(true).truncate(true).open(file_name)?;
 	write!(file, "{}", f.to_file_string())?;
 
-	let mut serial_num_file = OpenOptions::new().create(true).write(true).open(".serial_num")?;
-	write!(serial_num_file, "{}", serial_num+1)?;
 	Ok(())
 }
 pub fn list(args: &[String]) -> std::io::Result<()>{
@@ -66,19 +65,36 @@ pub fn list(args: &[String]) -> std::io::Result<()>{
     }
     for entry in fs::read_dir("added")? {
         let entry = entry?;
-        println!("{:?}", entry.file_name());
+        let filename = entry.file_name();
+        let hash = filename.to_str().unwrap().replace(".todo", "");
+        
+        // Read the file to get the title
+        let file_path = format!("added/{}.todo", hash);
+        let content = fs::read_to_string(&file_path)?;
+        let title = content.lines()
+            .skip_while(|line| *line != "[title]")
+            .nth(1)
+            .unwrap_or("No title");
+        
+        println!("{} ({})", title, hash);
 		if listing_contents {
-			let _ = view(entry.file_name().to_str().unwrap());
+			let _ = view(&hash);
 		}
     }
     Ok(())
 }
-pub fn view(path: &str) -> std::io::Result<()>{
-    let path = Path::new(path).file_stem().unwrap().to_str().unwrap();
-    let file_path = format!("added/{}.todo", path);
-    let content = fs::read(&file_path)?;
+pub fn view(hash: &str) -> std::io::Result<()>{
+    let file_path = format!("added/{}.todo", hash);
+    let content = fs::read_to_string(&file_path)?;
 
-    println!("{}", String::from_utf8(content).unwrap());
+    // Extract and display title prominently
+    let title = content.lines()
+        .skip_while(|line| *line != "[title]")
+        .nth(1)
+        .unwrap_or("No title");
+    
+    println!("=== {} ===", title);
+    println!("{}", content);
     Ok(())
 }
 pub fn edit(_args: &[String]) -> std::io::Result<()>{
